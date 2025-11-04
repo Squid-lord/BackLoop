@@ -1,28 +1,57 @@
-# main.py
-# Backloop main controller
-
+# main.py — Backloop main controller
 import json
 from utils import toggle_backloop
 
-# Load settings from config.json
+CONFIG_PATH = "src/config.json"
+
 def load_config():
-    with open("src/config.json", "r") as file:
-        return json.load(file)
+    with open(CONFIG_PATH, "r") as f:
+        return json.load(f)
 
-# Save settings to config.json
 def save_config(config):
-    with open("src/config.json", "w") as file:
-        json.dump(config, file, indent=4)
+    with open(CONFIG_PATH, "w") as f:
+        json.dump(config, f, indent=4)
 
-# Main program simulation
-def run_backloop():
-    config = load_config()
-    if config["backloop_enabled"]:
-        print("Backloop is running...")
-        print(toggle_backloop(True))
-    else:
-        print("Backloop is off.")
-        print(toggle_backloop(False))
+def show_menu():
+    print("\n--- Backloop Control Menu ---")
+    print("1. Turn ON Backloop")
+    print("2. Turn OFF Backloop")
+    print("3. Show Current Status")
+    print("4. Exit")
+    print("------------------------------")
+
+def main():
+    while True:
+        show_menu()
+        choice = input("Enter choice (1-4): ").strip()
+
+        if choice == "1":
+            config = load_config()
+            config["reel_blocker"] = True
+            save_config(config)
+            toggle_backloop(True)
+            print("✅ Backloop is now ON.\n")
+
+        elif choice == "2":
+            config = load_config()
+            config["reel_blocker"] = False
+            save_config(config)
+            toggle_backloop(False)
+            print("❌ Backloop is now OFF.\n")
+
+        elif choice == "3":
+            config = load_config()
+            status = "ON" if config["reel_blocker"] else "OFF"
+            print(f"📊 Current Status: Backloop is {status}")
+            print(f"Auto Return Time: {config['auto_return_time']} sec")
+            print(f"Allowed Apps: {', '.join(config['allowed_apps'])}\n")
+
+        elif choice == "4":
+            print("👋 Exiting Backloop. Goodbye!")
+            break
+
+        else:
+            print("⚠️ Invalid choice. Try again.\n")
 
 if __name__ == "__main__":
-    run_backloop()
+    main()

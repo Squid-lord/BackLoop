@@ -1,0 +1,6 @@
+{
+  "reel_blocker": true,
+  "auto_return_time": 2,
+  "allowed_apps": ["whatsapp", "telegram"],
+  "language": "en"
+}

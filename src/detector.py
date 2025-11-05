@@ -1,35 +1,32 @@
-# detector.py — Simulated app detector for Backloop
-import os
-import time
-import json
+import time, json, os
 
 CONFIG_PATH = "src/config.json"
 
-def load_config():
+def get_config():
     with open(CONFIG_PATH, "r") as f:
         return json.load(f)
 
-def detect_current_app():
-    """Return the current foreground app’s package name."""
+def get_current_app():
+    # This example assumes Android `dumpsys` is used for foreground detection
     try:
-        output = os.popen("dumpsys activity activities | grep mResumedActivity").read()
-        if "/" in output:
-            pkg = output.split("/")[0].split()[-1]
-            return pkg
-        return "unknown"
-    except Exception as e:
-        return str(e)
+        app = os.popen("dumpsys window | grep mCurrentFocus").read()
+        return app
+    except:
+        return None
 
-def monitor_apps():
-    """Continuously monitor and auto-return if blocked apps detected."""
-    cfg = load_config()
-    while cfg.get("reel_blocker", False):
-        pkg = detect_current_app()
-        if pkg not in ["com.whatsapp", "com.google.android.youtube", "com.android.launcher"]:
-            print(f"⚠️ Detected blocked app: {pkg} → returning home!")
-            os.system("input keyevent 3")  # simulate Home
-        time.sleep(cfg.get("auto_return_time", 3))
+def detector_loop():
+    config = get_config()
+    targets = config["allowed_apps"]
+    wait = config["auto_return_time"]
+
+    print("👁️ Backloop Detector active.")
+    while True:
+        app = get_current_app()
+        if any(pkg in str(app) for pkg in targets):
+            print(f"⚠️ Detected {app.strip()} — returning to home screen in {wait}s.")
+            time.sleep(wait)
+            os.system("input keyevent 3")  # Press HOME
+        time.sleep(1)
 
 if __name__ == "__main__":
-    print("🔍 Monitoring apps... Press Ctrl+C to stop.")
-    monitor_apps()
+    detector_loop()

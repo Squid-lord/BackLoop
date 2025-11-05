@@ -1,16 +1,29 @@
-# main.py — Backloop main controller
+# main.py — Backloop main controller with memory
 import json
+import os
 from utils import toggle_backloop
 
 CONFIG_PATH = "src/config.json"
 
 def load_config():
+    if not os.path.exists(CONFIG_PATH):
+        default = {"reel_blocker": False, "auto_return_time": 3, "allowed_apps": ["WhatsApp", "YouTube"]}
+        save_config(default)
+        return default
     with open(CONFIG_PATH, "r") as f:
         return json.load(f)
 
 def save_config(config):
     with open(CONFIG_PATH, "w") as f:
         json.dump(config, f, indent=4)
+
+def auto_start():
+    config = load_config()
+    if config.get("reel_blocker"):
+        toggle_backloop(True)
+        print("⚙️ Auto-start: Backloop is ON (from last session).")
+    else:
+        print("⚙️ Auto-start: Backloop is OFF (from last session).")
 
 def show_menu():
     print("\n--- Backloop Control Menu ---")
@@ -21,6 +34,7 @@ def show_menu():
     print("------------------------------")
 
 def main():
+    auto_start()  # <-- This line loads previous state automatically
     while True:
         show_menu()
         choice = input("Enter choice (1-4): ").strip()

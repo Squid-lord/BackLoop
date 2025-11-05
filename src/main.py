@@ -34,7 +34,7 @@ def show_menu():
     print("------------------------------")
 
 def main():
-    auto_start()  # <-- This line loads previous state automatically
+    auto_start()
     while True:
         show_menu()
         choice = input("Enter choice (1-4): ").strip()

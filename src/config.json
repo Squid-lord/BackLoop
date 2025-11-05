@@ -1,6 +1,12 @@
 {
-  "reel_blocker": true,
-  "auto_return_time": 2,
-  "allowed_apps": ["whatsapp", "telegram"],
-  "language": "en"
+    "reel_blocker": false,
+    "auto_return_time": 3,
+    "allowed_apps": [
+        "com.facebook.katana",
+        "com.facebook.lite",
+        "com.instagram.android",
+        "com.instagram.lite",
+        "com.google.android.youtube",
+        "com.google.android.apps.youtube.mango"
+    ]
 }
